@@ -16,7 +16,7 @@ class CreateHelpAndGuideTable extends Migration
         Schema::create('help_and_guide', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->string('link');
+            $table->text('link');
             $table->text('description');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');

@@ -4,10 +4,8 @@
 namespace App\Modules\HelpAndGuide\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\CovidData\Contracts\CovidDataRepositoryInterface;
 use App\Modules\HelpAndGuide\Contracts\HelpAndGuideRepositoryInterface;
-use Illuminate\Http\Request;
-
+use App\Modules\HelpAndGuide\Http\Requests\HelpAndGuideRequest;
 
 
 class HelpAndGuideController extends Controller
@@ -21,7 +19,7 @@ class HelpAndGuideController extends Controller
 
     public function getAllHelpAndGuide(){
         try {
-            $respData= $this->helpAndGuideRepository->getAllCovidData();
+            $respData= $this->helpAndGuideRepository->getAllHelpAndGuide();
             return $this->apiResponse(true, $respData, API_RES_STATUS_SUCCESS, 'success');
 
         }catch (\Exception $exception){
@@ -30,23 +28,23 @@ class HelpAndGuideController extends Controller
 
     }
 
-    public function createHelpAndGuide(){
+    public function createHelpAndGuide(HelpAndGuideRequest $request){
         try {
-            $appData = $this->_setHelpAndGuideData();
+            $requestParam = $request->all();
+            $appData = $this->_setHelpAndGuideData($requestParam);
             $respData = $this->helpAndGuideRepository->create($appData);
             return $this->apiResponse(true, $respData, API_RES_STATUS_SUCCESS, 'success');
 
         }catch (\Exception $exception){
             return $this->apiResponse(false, 'Internal server error', API_RES_STATUS_INTERNAL_SERVER_ERROR);
         }
-
     }
 
     private function _setHelpAndGuideData($request){
         return [
-            "user_id" => $request->user_id, // get logged user id
-            "link" => $request->link,
-            "description" => $request->description,
+            "user_id" => auth()->user()->id,
+            "link" => $request['link'],
+            "description" => $request['description'],
         ];
     }
 

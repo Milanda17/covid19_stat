@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['prefix' => 'help-guide'], function () {
+Route::group(['prefix' => 'help-guide', 'middleware'=>['auth:api']], function () {
     Route::get('get-all', 'HelpAndGuideController@getAllHelpAndGuide');
     Route::post('create', 'HelpAndGuideController@createHelpAndGuide');
 });

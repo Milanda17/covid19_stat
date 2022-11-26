@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -12,6 +15,7 @@ class Handler extends ExceptionHandler
      *
      * @var array<int, class-string<Throwable>>
      */
+    protected $response_status_code = API_RES_STATUS_SUCCESS;
     protected $dontReport = [
         //
     ];
@@ -27,15 +31,29 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
+    public function render($request, Throwable $exception)
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        $message = null;
+        if ($exception->getMessage() == 'You are not authorized to access this resource.') {
+            $message =  'You are not authorized to access this resource.';
+            $this->response_status_code = API_RES_STATUS_UNAUTHORIZED;
+        }
+
+        if ($exception instanceof ValidationException)
+        {
+            $response['errors']['validations'] = $exception->errors();
+            return response(['data'=>$response])->header('Content-Type', 'application/json');
+        }
+
+        if ($exception instanceof AuthenticationException)
+        {
+            return response(['error'=>$exception->getMessage()],$this->response_status_code)->header('Content-Type', 'application/json');
+        }
+        if($message == null){
+            dd($exception);
+            return response(['error'=>$exception],$this->response_status_code)->header('Content-Type', 'application/json');
+        }
+        return response(['error'=> $message],$this->response_status_code)->header('Content-Type', 'application/json');
     }
+
 }

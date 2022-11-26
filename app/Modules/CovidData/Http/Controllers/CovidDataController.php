@@ -5,7 +5,6 @@ namespace App\Modules\CovidData\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\CovidData\Contracts\CovidDataRepositoryInterface;
-use Illuminate\Http\Request;
 
 
 
@@ -35,7 +34,7 @@ class CovidDataController extends Controller
             $endPoint = 'https://hpb.health.gov.lk/api/get-current-statistical';
             $response = guzzleRequest($endPoint);
             if ($response['success']){
-                $appData = $this->_setAppData();
+                $appData = $this->_setCovidData($response['data']['data']);
                 $respData = $this->covidStatRepository->createCovidData($appData);
                 return $this->apiResponse(true, $respData, API_RES_STATUS_SUCCESS, 'success');
 
@@ -50,8 +49,19 @@ class CovidDataController extends Controller
 
     private function _setCovidData($request){
         return [
-            "key" => $request->key,
-            "value" => $request->value
+            "update_date_time" => $request['update_date_time'],
+            "local_new_cases"=> $request['local_new_cases'],
+            "local_total_cases"=> $request['local_total_cases'],
+            "local_total_number_of_individuals_in_hospitals"=> $request['local_total_number_of_individuals_in_hospitals'],
+            "local_new_deaths"=> $request['local_new_deaths'],
+            "local_deaths"=> $request['local_deaths'],
+            "local_recovered"=> $request['local_recovered'],
+            'local_active_cases'=> $request['local_active_cases'],
+            'global_new_cases'=> $request['global_new_cases'],
+            "global_total_cases"=> $request['global_total_cases'],
+            'global_deaths'=> $request['global_deaths'],
+            "global_new_deaths"=> $request['global_new_deaths'],
+            "global_recovered"=> $request['global_recovered']
         ];
     }
 

@@ -23,25 +23,23 @@ class RegistrationRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
+        return [
             'name' => ['required', 'string'],
-            'email' => ['required', 'string', 'unique:users'],
+            'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', 'string', 'min:6','max:10'],
-            'confirm_password' => ['required', 'string', 'min:6','max:10']
+            'confirm_password' => ['required', 'string', 'min:6','same:password']
         ];
 
-        return $rules;
+
     }
 
     public function messages()
     {
-        $messages = [
+        return [
             'name.required' => 'Name is required.',
             'email.required' => 'Email is required.',
             'password.required' => 'Password is required.',
             'confirm_password.required' => 'Confirm password is required.',
         ];
-        return $messages;
-
     }
 }
