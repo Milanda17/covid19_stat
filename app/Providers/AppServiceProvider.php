@@ -13,8 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('App\Modules\CovidData\Contracts\CovidDataRepositoryInterface', 'App\Modules\CovidData\Repositories\CovidDataRepository');
+        $this->app->bind('App\Modules\HelpAndGuide\Contracts\HelpAndGuideRepositoryInterface', 'App\Modules\HelpAndGuide\Repositories\HelpAndGuideRepository');
     }
+
 
     /**
      * Bootstrap any application services.
