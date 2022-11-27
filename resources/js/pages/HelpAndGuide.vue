@@ -71,6 +71,7 @@
 
 <script>
 import {reactive, onMounted, ref} from 'vue'
+import router from "../router";
 
 
 export default {
@@ -84,23 +85,35 @@ export default {
         });
         const helpList = ref([]);
 
-        const headers = {
-            "Authorization": "Bearer" + localStorage.getItem('token'),
-        };
-
         onMounted(()=>{
             getAllHelpAndGuide()
         })
 
         // get all help and guide data
         function getAllHelpAndGuide() {
-            axios.get('api/help-guide/get-all',{headers}).then((response) => {
-                if (response.data.success && response.data != null) {
-                    helpList.value = response.data.data
-                }
-            }).catch(()=>{
-                console.log('error')
-            })
+            let token =  localStorage.getItem('token')
+            // check token is empty
+            if (token != null && token !=''){
+                //set bearer token
+                const headers = {
+                    "Authorization": "Bearer" + token,
+                };
+                axios.get('api/help-guide/get-all',{headers}).then((response) => {
+                    if (response.data.success && !response.data.data.error) {
+                        helpList.value = response.data.data
+                    }else if(response.data.error == "Unauthenticated."){    //Unauthenticated validation handle
+                        router.push({ name: 'login' }).then(()=>{
+                            window.location.reload();
+                        })
+                    }
+                }).catch(()=>{
+                    console.log('error')
+                })
+            }else {
+                router.push({ name: 'login' }).then(()=>{
+                    window.location.reload();
+                })
+            }
         }
 
         // create help and guide record
@@ -109,17 +122,36 @@ export default {
             let submitData ={}
             submitData.link =  form.link
             submitData.description =  form.description
-            axios.post('api/help-guide/create',submitData,{headers}).then((response) => {
-                if (response.data != null && !response.data.data.errors) {
-                    closeModal()
-                    getAllHelpAndGuide()   // get all help & guide records
-                    restForm()   //reset form data
-                } else {
-                    form.errors = response.data.data.errors
-                }
-            }).catch(()=>{
-                console.log('error')
-            })
+            let token =  localStorage.getItem('token')
+
+            // check token is empty
+            if (token != null && token !=''){
+                //set bearer token
+                const headers = {
+                    "Authorization": "Bearer" + token,
+                };
+                axios.post('api/help-guide/create',submitData,{headers}).then((response) => {
+                    if (response.data.success != null && !response.data.data.errors) {
+                        closeModal()
+                        getAllHelpAndGuide()   // get all help & guide records
+                        restForm()   //reset form data
+                    } else {
+                        console.log(response.data)
+                        if(response.data.error == "Unauthenticated."){  //Unauthenticated validation handle
+                            router.push({ name: 'login' }).then(()=>{
+                                window.location.reload();
+                            })
+                        }
+                        form.errors = response.data.data.errors
+                    }
+                }).catch(()=>{
+                    console.log('error')
+                })
+            }else {
+                router.push({ name: 'login' }).then(()=>{
+                    window.location.reload();
+                })
+            }
         }
 
         //format date & time

@@ -47,14 +47,17 @@ name: "Login",
             submitData.password = form.password
             await axios.post('api/auth/login', form).then(response => {
                 if (response.data != null && !response.data.data.errors){
-                    localStorage.setItem('token', response.data.data.access_token)  //save access token in local storage
-                    router.push({ name: 'help-and-guide' }).then(()=>{   //redirect to help-and-guide UI
+                    //save access token in local storage
+                    localStorage.setItem('token', response.data.data.access_token)
+
+                    //redirect to help-and-guide UI
+                    router.push({ name: 'help-and-guide' }).then(()=>{
                         window.location.reload();
                     })
                     restForm();
 
                 }else {
-                    form.errors = response.data.data.errors  //set errors
+                    form.errors = response.data.data.errors  //handle validation errors
                 }
             }).catch(()=>{
                 alert('You have entered an invalid username or password')

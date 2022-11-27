@@ -70,7 +70,8 @@ name: "Register",
                     router.push({ name: 'login' })  //redirect to login
                     restForm();
                 }else {
-                    form.errors = response.data.data.errors  //handle errors
+                    //handle errors
+                    form.errors = response.data.data.errors
                 }
             }).catch(()=>{
                 console.log('error')

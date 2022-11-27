@@ -24,7 +24,7 @@ class HelpAndGuideRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'link' => ['required'],
+            'link' => ['required','url'],
             'description' => ['required'],
         ];
 
@@ -35,6 +35,7 @@ class HelpAndGuideRequest extends FormRequest
     {
         $messages = [
             'link.required' => 'Link is required.',
+            'link.url' => 'Link must be a valid URL.',
             'description.required' => 'Description is required.',
         ];
         return $messages;

@@ -31,22 +31,37 @@ export default {
         const name =  ref(localStorage.getItem('name'));
         const isGuest = !localStorage.getItem('token')
 
-        const headers = {
-            "Authorization": "Bearer" + localStorage.getItem('token'),
-        };
-
         // user logout
         async function logout() {
-            await axios.get('api/auth/logout', {headers}).then(response => {  //expire token in backend
-                if (response.data.success && response.data != null ){
-                    localStorage.removeItem('token') // remove token from local storage
-                    router.push({ name: 'login' }).then(()=>{  // redirect to help-and-guide page
-                        window.location.reload();
-                    })
-                }
-            }).catch(()=>{
-                console.log('error')
-            })
+            let token =  localStorage.getItem('token')
+
+            // check token is empty
+            if (token != null && token !='') {
+
+                //set bearer token
+                const headers = {
+                    "Authorization": "Bearer" + token,
+                };
+
+                //expire token in backend
+                await axios.get('api/auth/logout', {headers}).then(response => {
+                    if (response.data.success && !response.data.data.errors){
+                        router.push({ name: 'login' }).then(()=>{
+                            window.location.reload();
+                        })
+                    }else if(response.data.error == "Unauthenticated."){  //Unauthenticated validation handle
+                        router.push({ name: 'login' }).then(()=>{
+                            window.location.reload();
+                        })
+                    }
+                }).catch(()=>{
+                    console.log('error')
+                })
+            }else {
+                router.push({ name: 'login' }).then(()=>{
+                    window.location.reload();
+                })
+            }
         }
 
         return {

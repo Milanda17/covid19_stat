@@ -19751,9 +19751,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   setup: function setup() {
     var name = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(localStorage.getItem('name'));
     var isGuest = !localStorage.getItem('token');
-    var headers = {
-      "Authorization": "Bearer" + localStorage.getItem('token')
-    };
 
     // user logout
     function logout() {
@@ -19761,28 +19758,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
     function _logout() {
       _logout = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var token, headers;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                token = localStorage.getItem('token'); // check token is empty
+                if (!(token != null && token != '')) {
+                  _context.next = 7;
+                  break;
+                }
+                //set bearer token
+                headers = {
+                  "Authorization": "Bearer" + token
+                }; //expire token in backend
+                _context.next = 5;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default().get('api/auth/logout', {
                   headers: headers
                 }).then(function (response) {
-                  //expire token in backend
-                  if (response.data.success && response.data != null) {
-                    localStorage.removeItem('token'); // remove token from local storage
+                  if (response.data.success && !response.data.data.errors) {
                     _router__WEBPACK_IMPORTED_MODULE_2__["default"].push({
                       name: 'login'
                     }).then(function () {
-                      // redirect to help-and-guide page
+                      window.location.reload();
+                    });
+                  } else if (response.data.error == "Unauthenticated.") {
+                    //Unauthenticated validation handle
+                    _router__WEBPACK_IMPORTED_MODULE_2__["default"].push({
+                      name: 'login'
+                    }).then(function () {
                       window.location.reload();
                     });
                   }
                 })["catch"](function () {
                   console.log('error');
                 });
-              case 2:
+              case 5:
+                _context.next = 8;
+                break;
+              case 7:
+                _router__WEBPACK_IMPORTED_MODULE_2__["default"].push({
+                  name: 'login'
+                }).then(function () {
+                  window.location.reload();
+                });
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -19938,6 +19958,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../router */ "./resources/js/router.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "CovidDashboard",
@@ -19948,24 +19970,42 @@ __webpack_require__.r(__webpack_exports__);
       errors: ''
     });
     var helpList = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
-    var headers = {
-      "Authorization": "Bearer" + localStorage.getItem('token')
-    };
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.onMounted)(function () {
       getAllHelpAndGuide();
     });
 
     // get all help and guide data
     function getAllHelpAndGuide() {
-      axios.get('api/help-guide/get-all', {
-        headers: headers
-      }).then(function (response) {
-        if (response.data.success && response.data != null) {
-          helpList.value = response.data.data;
-        }
-      })["catch"](function () {
-        console.log('error');
-      });
+      var token = localStorage.getItem('token');
+      // check token is empty
+      if (token != null && token != '') {
+        //set bearer token
+        var headers = {
+          "Authorization": "Bearer" + token
+        };
+        axios.get('api/help-guide/get-all', {
+          headers: headers
+        }).then(function (response) {
+          if (response.data.success && !response.data.data.error) {
+            helpList.value = response.data.data;
+          } else if (response.data.error == "Unauthenticated.") {
+            //Unauthenticated validation handle
+            _router__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+              name: 'login'
+            }).then(function () {
+              window.location.reload();
+            });
+          }
+        })["catch"](function () {
+          console.log('error');
+        });
+      } else {
+        _router__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+          name: 'login'
+        }).then(function () {
+          window.location.reload();
+        });
+      }
     }
 
     // create help and guide record
@@ -19974,25 +20014,53 @@ __webpack_require__.r(__webpack_exports__);
       var submitData = {};
       submitData.link = form.link;
       submitData.description = form.description;
-      axios.post('api/help-guide/create', submitData, {
-        headers: headers
-      }).then(function (response) {
-        if (response.data != null && !response.data.data.errors) {
-          closeModal();
-          getAllHelpAndGuide(); // get all help & guide records
-          restForm(); //reset form data
-        } else {
-          form.errors = response.data.data.errors;
-        }
-      })["catch"](function () {
-        console.log('error');
-      });
+      var token = localStorage.getItem('token');
+
+      // check token is empty
+      if (token != null && token != '') {
+        //set bearer token
+        var headers = {
+          "Authorization": "Bearer" + token
+        };
+        axios.post('api/help-guide/create', submitData, {
+          headers: headers
+        }).then(function (response) {
+          if (response.data.success != null && !response.data.data.errors) {
+            closeModal();
+            getAllHelpAndGuide(); // get all help & guide records
+            restForm(); //reset form data
+          } else {
+            console.log(response.data);
+            if (response.data.error == "Unauthenticated.") {
+              //Unauthenticated validation handle
+              _router__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+                name: 'login'
+              }).then(function () {
+                window.location.reload();
+              });
+            }
+            form.errors = response.data.data.errors;
+          }
+        })["catch"](function () {
+          console.log('error');
+        });
+      } else {
+        _router__WEBPACK_IMPORTED_MODULE_1__["default"].push({
+          name: 'login'
+        }).then(function () {
+          window.location.reload();
+        });
+      }
     }
+
+    //format date & time
     function dataTimeFormatting(rowDateTime) {
       return new Date(rowDateTime).toLocaleString('en-GB', {
         timeZone: 'IST'
       });
     }
+
+    //close popup modal
     function closeModal() {
       var modal = document.getElementById('modal');
       modal.classList.remove('show');
@@ -20065,16 +20133,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context.next = 6;
                 return axios.post('api/auth/login', form).then(function (response) {
                   if (response.data != null && !response.data.data.errors) {
-                    localStorage.setItem('token', response.data.data.access_token); //save access token in local storage
+                    //save access token in local storage
+                    localStorage.setItem('token', response.data.data.access_token);
+
+                    //redirect to help-and-guide UI
                     _router__WEBPACK_IMPORTED_MODULE_1__["default"].push({
                       name: 'help-and-guide'
                     }).then(function () {
-                      //redirect to help-and-guide UI
                       window.location.reload();
                     });
                     restForm();
                   } else {
-                    form.errors = response.data.data.errors; //set errors
+                    form.errors = response.data.data.errors; //handle validation errors
                   }
                 })["catch"](function () {
                   alert('You have entered an invalid username or password');
@@ -20162,7 +20232,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     }); //redirect to login
                     restForm();
                   } else {
-                    form.errors = response.data.data.errors; //handle errors
+                    //handle errors
+                    form.errors = response.data.data.errors;
                   }
                 })["catch"](function () {
                   console.log('error');
@@ -21015,6 +21086,7 @@ var routes = [{
   name: 'login',
   component: _pages_auth_Login__WEBPACK_IMPORTED_MODULE_2__["default"],
   meta: {
+    requiresAuth: true,
     guest: true
   }
 }, {
@@ -21036,12 +21108,16 @@ router.beforeEach(function (to, from, next) {
     return record.meta.guest;
   })) {
     //access both guest & requiresAuth allow routers
+    if (to.matched[0].name == 'login') {
+      localStorage.removeItem('token'); //remove token from localStorage when request login router
+    }
+
     next();
   } else if (to.matched.some(function (record) {
     return record.meta.requiresAuth;
   })) {
     //access only requiresAuth allow routers
-    if (localStorage.getItem('token') == null) {
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == '') {
       //check token is in local storage
       next({
         path: '/login',
@@ -21056,7 +21132,7 @@ router.beforeEach(function (to, from, next) {
     return record.meta.guest;
   })) {
     //access only guest allow routers
-    if (localStorage.getItem('token') == null) {
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == '') {
       //check token is in local storage
       next();
     } else {
