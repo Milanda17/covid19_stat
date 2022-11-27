@@ -15,11 +15,12 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    //user login
     public function login(LoginRequest $request)
     {
         try {
-            $credentials = $request->only(['email', 'password']);
-            if (!$token = auth()->attempt($credentials)) {
+            $credentials = $request->only(['email', 'password']);  //filter only email & password
+            if (!$token = auth()->attempt($credentials)) {       //check credentials are correct
                 return $this->apiResponse(false, 'Unauthorized', API_RES_STATUS_UNAUTHORIZED);
             }
             $newToken = $this->createNewToken($token);
@@ -31,6 +32,7 @@ class AuthController extends Controller
 
     }
 
+    //user registration
     public function register(RegistrationRequest $request)
     {
         try {
@@ -46,6 +48,7 @@ class AuthController extends Controller
         }
     }
 
+    //get login user details
     public function getLoginUserData()
     {
         try {
@@ -56,6 +59,7 @@ class AuthController extends Controller
         }
     }
 
+    // user logout
     public function logout()
     {
         try {

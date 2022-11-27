@@ -17,6 +17,7 @@ class HelpAndGuideController extends Controller
         $this->helpAndGuideRepository = $helpAndGuideRepository;
     }
 
+    //get all help and guide records
     public function getAllHelpAndGuide(){
         try {
             $respData= $this->helpAndGuideRepository->getAllHelpAndGuide();
@@ -28,11 +29,12 @@ class HelpAndGuideController extends Controller
 
     }
 
+    // create help and guide recode
     public function createHelpAndGuide(HelpAndGuideRequest $request){
         try {
             $requestParam = $request->all();
-            $appData = $this->_setHelpAndGuideData($requestParam);
-            $respData = $this->helpAndGuideRepository->create($appData);
+            $appData = $this->_setHelpAndGuideData($requestParam); // set help and guide data
+            $respData = $this->helpAndGuideRepository->createHelpAndGuide($appData);
             return $this->apiResponse(true, $respData, API_RES_STATUS_SUCCESS, 'success');
 
         }catch (\Exception $exception){
@@ -42,7 +44,7 @@ class HelpAndGuideController extends Controller
 
     private function _setHelpAndGuideData($request){
         return [
-            "user_id" => auth()->user()->id,
+            "user_id" => auth()->user()->id, //get login user id
             "link" => $request['link'],
             "description" => $request['description'],
         ];

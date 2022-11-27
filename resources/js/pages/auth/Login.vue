@@ -17,7 +17,7 @@
                                 <input type="password" id="password" class="form-control" v-model="form.password" >
                                 <span class="validation-text" v-if="form.errors">{{form.errors.validations.password ? form.errors.validations.password[0] : ''}}</span>
                             </div>
-                            <button type="button" class="btn btn-outline-info my-2" @click="submitLogin()">Signin</button>
+                            <button type="button" class="btn btn-outline-info my-2" @click="login()">Signin</button>
                         </form>
                     </div>
                 </div>
@@ -39,21 +39,22 @@ name: "Login",
             errors: '',
         })
 
-        async function submitLogin() {
+        // user login
+        async function login() {
             form.errors =''
             let submitData = {}
             submitData.email = form.email
             submitData.password = form.password
             await axios.post('api/auth/login', form).then(response => {
                 if (response.data != null && !response.data.data.errors){
-                    localStorage.setItem('token', response.data.data.access_token)
-                    router.push({ name: 'help-and-guide' }).then(()=>{
+                    localStorage.setItem('token', response.data.data.access_token)  //save access token in local storage
+                    router.push({ name: 'help-and-guide' }).then(()=>{   //redirect to help-and-guide UI
                         window.location.reload();
                     })
                     restForm();
 
                 }else {
-                    form.errors = response.data.data.errors
+                    form.errors = response.data.data.errors  //set errors
                 }
             }).catch(()=>{
                 console.log('error')
@@ -68,7 +69,7 @@ name: "Login",
 
         return {
             form,
-            submitLogin,
+            login,
         }
     },
 }

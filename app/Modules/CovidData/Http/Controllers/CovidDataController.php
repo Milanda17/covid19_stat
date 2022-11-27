@@ -17,6 +17,7 @@ class CovidDataController extends Controller
         $this->covidStatRepository = $covidStatRepository;
     }
 
+    //get latest covid data
     public function getLatestCovidData(){
         try {
             $respData= $this->covidStatRepository->getLatestCovidData();
@@ -28,13 +29,13 @@ class CovidDataController extends Controller
 
     }
 
-
+    // save covid data run after API call
     public function saveCovidData(){
         try {
             $endPoint = 'https://hpb.health.gov.lk/api/get-current-statistical';
-            $response = guzzleRequest($endPoint);
-            if ($response['success']){
-                $appData = $this->_setCovidData($response['data']['data']);
+            $response = guzzleRequest($endPoint);  // call guzzle request common helper function
+            if ($response['success']){        // check guzzle request is success
+                $appData = $this->_setCovidData($response['data']['data']);   //set covid data array
                 $respData = $this->covidStatRepository->createCovidData($appData);
                 return $this->apiResponse(true, $respData, API_RES_STATUS_SUCCESS, 'success');
 

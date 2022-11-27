@@ -14,31 +14,31 @@
                         <table class="table table-hover">
                             <tbody>
                             <tr>
-                                <td>New cases</td>
+                                <td class="td-text">New cases</td>
                                 <td>{{form.local_new_cases}}</td>
                             </tr>
                             <tr>
-                                <td>Active cases</td>
+                                <td class="td-text">Active cases</td>
                                 <td>{{form.local_active_cases}}</td>
                             </tr>
                             <tr>
-                                <td>Total cases</td>
+                                <td class="td-text">Total cases</td>
                                 <td>{{form.local_total_cases}}</td>
                             </tr>
                             <tr>
-                                <td>Number of individuals in hospitals</td>
+                                <td class="td-text">Number of individuals in hospitals</td>
                                 <td>{{form.local_total_number_of_individuals_in_hospitals}}</td>
                             </tr>
                             <tr>
-                                <td>Recovered</td>
+                                <td class="td-text">Recovered</td>
                                 <td>{{form.local_recovered}}</td>
                             </tr>
                             <tr>
-                                <td>New death</td>
+                                <td class="td-text">New death</td>
                                 <td>{{form.local_new_deaths}}</td>
                             </tr>
                             <tr>
-                                <td>Total death</td>
+                                <td class="td-text">Total death</td>
                                 <td>{{form.local_deaths}}</td>
                             </tr>
                             </tbody>
@@ -54,24 +54,24 @@
                         <table class="table table-hover">
                             <tbody>
                             <tr>
-                                <td>New cases</td>
+                                <td class="td-text">New cases</td>
                                 <td>{{form.global_new_cases}}</td>
                             </tr>
                             <tr>
-                                <td>Total cases</td>
+                                <td class="td-text">Total cases</td>
                                 <td>{{form.global_total_cases}}</td>
                             </tr>
 
                             <tr>
-                                <td>Recovered</td>
+                                <td class="td-text">Recovered</td>
                                 <td>{{form.global_recovered}}</td>
                             </tr>
                             <tr>
-                                <td>New death</td>
+                                <td class="td-text">New death</td>
                                 <td>{{form.global_new_deaths}}</td>
                             </tr>
                             <tr>
-                                <td>Total death</td>
+                                <td class="td-text">Total death</td>
                                 <td>{{form.global_deaths}}</td>
                             </tr>
                             </tbody>
@@ -112,8 +112,9 @@ name: "CovidDashboard",
             getCovidData()
         })
 
-        function getCovidData() {
-            axios.get('api/covid-data/get').then((response) => {
+        //get latest covid data and set into variable
+        async function getCovidData() {
+            await axios.get('api/covid-data/get').then((response) => {
                 if (response.data.success &&  response.data != null) {
                     form.update_date_time = response.data.data.update_date_time
                     form.local_new_cases = response.data.data.local_new_cases
@@ -129,6 +130,8 @@ name: "CovidDashboard",
                     form.global_new_deaths = response.data.data.global_new_deaths
                     form.global_recovered = response.data.data.global_recovered
                 }
+            }).catch(()=>{
+                console.log('error')
             })
         }
         return {
@@ -143,10 +146,15 @@ name: "CovidDashboard",
 <style scoped>
 
 .center{
-    padding-left: 40%;
+    padding-left: 30%;
+    padding-bottom: 40px;
 }
 .title-color{
     color: #e2e8f0;
+}
+.td-text{
+    color: darkcyan;
+    font-size: large;
 }
 
 </style>

@@ -35,11 +35,12 @@ export default {
             "Authorization": "Bearer" + localStorage.getItem('token'),
         };
 
+        // user logout
         async function logout() {
-            await axios.get('api/auth/logout', {headers}).then(response => {
+            await axios.get('api/auth/logout', {headers}).then(response => {  //expire token in backend
                 if (response.data.success && response.data != null ){
-                    localStorage.removeItem('token')
-                    router.push({ name: 'help-and-guide' }).then(()=>{
+                    localStorage.removeItem('token') // remove token from local storage
+                    router.push({ name: 'login' }).then(()=>{  // redirect to help-and-guide page
                         window.location.reload();
                     })
                 }
@@ -53,7 +54,6 @@ export default {
             logout,
             isGuest
         }
-
     },
 }
 </script>

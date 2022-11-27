@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CovidDashboard from "./pages/CovidDashboard";
 import HelpAndGuide from "./pages/HelpAndGuide";
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import Unauthorized from "./components/Unauthorized";
 
 
@@ -62,10 +62,10 @@ const routes = [
 const router = createRouter({ history: createWebHistory(), routes });
 
 router.beforeEach((to, from, next) => {
-        if (to.matched.some(record => record.meta.requiresAuth) && to.matched.some(record => record.meta.guest)){
+        if (to.matched.some(record => record.meta.requiresAuth) && to.matched.some(record => record.meta.guest)){   //access both guest & requiresAuth allow routers
             next()
-        }else if (to.matched.some(record => record.meta.requiresAuth)) {
-            if (localStorage.getItem('token') == null) {
+        }else if (to.matched.some(record => record.meta.requiresAuth)) { //access only requiresAuth allow routers
+            if (localStorage.getItem('token') == null) {  //check token is in local storage
                 next({
                     path: '/login',
                     params: {nextUrl: to.fullPath}
@@ -73,14 +73,14 @@ router.beforeEach((to, from, next) => {
             } else {
                 next()
             }
-        } else if (to.matched.some(record => record.meta.guest)) {
-            if (localStorage.getItem('token') == null) {
+        } else if (to.matched.some(record => record.meta.guest)) { //access only guest allow routers
+            if (localStorage.getItem('token') == null) { //check token is in local storage
                 next()
             } else {
                 next({path: '/unauthorized',})
             }
         } else {
-            next()
+            next({path: '/unauthorized',})
         }
 
 })

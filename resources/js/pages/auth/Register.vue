@@ -30,7 +30,7 @@
                                     <span class="validation-text" v-if="form.errors">{{form.errors.validations.confirm_password ? form.errors.validations.confirm_password[0] : ''}}</span>
                                 </div>
                             </div>
-                            <button class="btn btn-outline-info my-2" type="button" @click="submitRegister()">Register</button>
+                            <button class="btn btn-outline-info my-2" type="button" @click="register()">Register</button>
                         </form>
                     </div>
                 </div>
@@ -56,20 +56,23 @@ name: "Register",
             errors: '',
         })
 
-        async function submitRegister() {
+        // user register
+        async function register() {
             form.errors =''
-            let submitData = {}
+            let submitData = {}   // set request body
             submitData.name = form.name
             submitData.email = form.email
             submitData.password = form.password
             submitData.confirm_password = form.confirmPassword
             await axios.post('api/auth/register', submitData).then((response) => {
                 if (response.data != null && !response.data.data.errors){
-                    router.push({ name: 'login' })
+                    router.push({ name: 'login' })  //redirect to login
                     restForm();
                 }else {
-                    form.errors = response.data.data.errors
+                    form.errors = response.data.data.errors  //handle errors
                 }
+            }).catch(()=>{
+                console.log('error')
             })
         }
 
@@ -83,7 +86,7 @@ name: "Register",
 
         return {
             form,
-            submitRegister,
+            register,
         }
     },
 }

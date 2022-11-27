@@ -16,6 +16,7 @@ class CovidDataRepository extends MainRepository implements CovidDataRepositoryI
         return 'App\Models\CovidData';
     }
 
+    //create covid data record
     public function createCovidData($data){
         try{
             return $this->create($data);
@@ -25,9 +26,11 @@ class CovidDataRepository extends MainRepository implements CovidDataRepositoryI
         }
     }
 
+    // get latest covid data
     public function getLatestCovidData(){
         try {
-            return CovidData::select(  'update_date_time',
+            return CovidData::select(
+                'update_date_time',
                 'local_new_cases',
                 'local_total_cases',
                 'local_total_number_of_individuals_in_hospitals',

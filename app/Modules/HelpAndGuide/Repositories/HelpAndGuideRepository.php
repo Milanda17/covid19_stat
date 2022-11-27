@@ -18,6 +18,7 @@ class HelpAndGuideRepository extends MainRepository implements HelpAndGuideRepos
         return 'App\Models\HelpAndGuide';
     }
 
+    //  create help & guide recode
     public function createHelpAndGuide($data)
     {
         try{
@@ -28,10 +29,12 @@ class HelpAndGuideRepository extends MainRepository implements HelpAndGuideRepos
         }
     }
 
+    // get all help & guide records sort by created_at date
     public function getAllHelpAndGuide()
     {
         try{
-            return HelpAndGuide::with('user')->select('user_id','link','description','created_at' )->orderBy('created_at','desc')->get();
+            return HelpAndGuide::with('user')->select('user_id','link','description','created_at' )
+                ->orderBy('created_at','desc')->get();
         }catch (\Exception $e){
             error_log($e->getMessage());
             return null;

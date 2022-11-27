@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('command:covid_data')->everyMinute();
+        $schedule->command('command:covid_data')->everyMinute();  //covid data schedule run every minute
     }
 
     /**

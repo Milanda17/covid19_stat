@@ -1,5 +1,6 @@
 <?php
 
+// common guzzle request function
 function guzzleRequest($endpoint,$request_type='get',$params=[]): array
 {
     try {

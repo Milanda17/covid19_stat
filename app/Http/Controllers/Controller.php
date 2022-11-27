@@ -11,6 +11,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    //common API response
     public function apiResponse($success= true,$response=[],$status_code = API_RES_STATUS_SUCCESS, $msg ='')
     {
         if ($success){

@@ -92,14 +92,18 @@ export default {
             getAllHelpAndGuide()
         })
 
+        // get all help and guide data
         function getAllHelpAndGuide() {
             axios.get('api/help-guide/get-all',{headers}).then((response) => {
                 if (response.data.success && response.data != null) {
                     helpList.value = response.data.data
                 }
+            }).catch(()=>{
+                console.log('error')
             })
         }
 
+        // create help and guide record
         function submitHelpAndGuide(){
             form.errors =''
             let submitData ={}
@@ -107,14 +111,17 @@ export default {
             submitData.description =  form.description
             axios.post('api/help-guide/create',submitData,{headers}).then((response) => {
                 if (response.data != null && !response.data.data.errors) {
-                    getAllHelpAndGuide()
-                    restForm()
+                    getAllHelpAndGuide()   // get all help & guide records
+                    restForm()   //reset form data
                 } else {
                     form.errors = response.data.data.errors
                 }
+            }).catch(()=>{
+                console.log('error')
             })
         }
 
+        //reset form data
         function restForm(){
             form.link = null
             form.description = null
