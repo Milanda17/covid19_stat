@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Validation\ValidationException;
@@ -50,7 +49,6 @@ class Handler extends ExceptionHandler
             return response(['error'=>$exception->getMessage()],$this->response_status_code)->header('Content-Type', 'application/json');
         }
         if($message == null){
-            dd($exception);
             return response(['error'=>$exception],$this->response_status_code)->header('Content-Type', 'application/json');
         }
         return response(['error'=> $message],$this->response_status_code)->header('Content-Type', 'application/json');

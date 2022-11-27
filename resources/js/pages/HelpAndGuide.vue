@@ -122,10 +122,12 @@ export default {
             })
         }
 
+        //format date & time
         function dataTimeFormatting(rowDateTime){
             return new Date(rowDateTime).toLocaleString('en-GB', { timeZone: 'IST' })
         }
 
+        //close popup modal
         function closeModal(){
             const modal = document.getElementById('modal');
             modal.classList.remove('show');

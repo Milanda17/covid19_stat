@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
-use function Symfony\Component\Translation\t;
 
 class AuthController extends Controller
 {
