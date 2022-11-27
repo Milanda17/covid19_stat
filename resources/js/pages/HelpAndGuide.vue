@@ -14,8 +14,8 @@
                 <div class="card mb-3" v-for="item in helpList">
                     <div class="card-header mb-3">
                         <div class="row">
-                        <div class="col-6"> <p>Name : {{ item.user.name }}</p></div>
-                        <div class="col-6"> <p>Date : {{ item.created_at }}</p></div>
+                        <div class="col-6"> <p class="header-text">Name : {{ item.user.name }}</p></div>
+                        <div class="col-6"> <p class="header-text">Date Time: {{ dataTimeFormatting(item.created_at) }}</p></div>
                         </div>
 
                     </div>
@@ -111,6 +111,7 @@ export default {
             submitData.description =  form.description
             axios.post('api/help-guide/create',submitData,{headers}).then((response) => {
                 if (response.data != null && !response.data.data.errors) {
+                    closeModal()
                     getAllHelpAndGuide()   // get all help & guide records
                     restForm()   //reset form data
                 } else {
@@ -119,6 +120,19 @@ export default {
             }).catch(()=>{
                 console.log('error')
             })
+        }
+
+        function dataTimeFormatting(rowDateTime){
+            return new Date(rowDateTime).toLocaleString('en-GB', { timeZone: 'IST' })
+        }
+
+        function closeModal(){
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            modal.setAttribute('style', 'display: none');
+            const modalBackdrops = document.getElementsByClassName('modal-backdrop');
+            document.body.removeChild(modalBackdrops[0]);
         }
 
         //reset form data
@@ -131,6 +145,7 @@ export default {
             form,
             helpList,
             submitHelpAndGuide,
+            dataTimeFormatting,
         }
 
     },
@@ -149,6 +164,10 @@ export default {
 .validation-text{
     color: darkred;
     font-size: smaller;
+}
+.header-text{
+    color: darkcyan;
+    font-size: medium;
 }
 
 </style>

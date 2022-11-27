@@ -57,6 +57,7 @@ name: "Login",
                     form.errors = response.data.data.errors  //set errors
                 }
             }).catch(()=>{
+                alert('You have entered an invalid username or password')
                 console.log('error')
             })
         }

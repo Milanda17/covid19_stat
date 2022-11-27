@@ -65,7 +65,8 @@ name: "Register",
             submitData.password = form.password
             submitData.confirm_password = form.confirmPassword
             await axios.post('api/auth/register', submitData).then((response) => {
-                if (response.data != null && !response.data.data.errors){
+                if (response.data.success && response.data != null && !response.data.data.errors){
+                    alert('Registration successfully completed')
                     router.push({ name: 'login' })  //redirect to login
                     restForm();
                 }else {
